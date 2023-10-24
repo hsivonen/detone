@@ -29,7 +29,20 @@ struct ToneData {
     extensions_for_vietnamese: [u16; 90],
 }
 
+// These arrays list the actual decomposed code point combinations that should
+// replace a single, composed code point. For example, 0x1EA0 ("Ạ") decomposes
+// into 0x0041 ("A") + 0x0323 ("Combining dot below"). Decompositions for
+// windows-1258 are always two code points.
+//
+// Entries here pack information about both decomposed points into a single
+// integer, where the lower bits indicate the first code point, and the upper
+// bits indicate the second code point (usually a tone mark). There are three
+// sets of decompositions, and each packs the the two code points together
+// differently to make efficient use of memory.
 static TONE_DATA: ToneData = ToneData {
+    // Index for orthographic-only decompositions. This array lists the Unicode
+    // code points that can be decomposed, while the `windows_1258_value` array
+    // lists the actual decompositions for them at the corresponding index.
     windows_1258_key: [
         0xC0, // À
         0xC1, // Á
@@ -48,6 +61,21 @@ static TONE_DATA: ToneData = ToneData {
         0xF9, // ù
         0xFA, // ú
     ],
+    // Orthographic only decompositions. Given a composed code point, find it
+    // in the above array, then look for the decomposition at the corresponding
+    // index in this array.
+    //
+    // The lower 7 bits of a value is the first replacement code point. The
+    // upper bit is the second code point, offset by negative 0x0300. For
+    // example, the decomposition of 0xC0 ("À") is 0x41, which represents the
+    // code points 0x41 ("A") + 0x0300 ("Combining grave accent"):
+    //
+    //     0x41  =  0b_0100_0001
+    //     First:   0b_0100_0001 = 0x41
+    //                  ^^^^^^^^   (Lower 7 bits)
+    //     Second:  0b_0         = 0x00 + 0x300 = 0x0300
+    //                 ^           (Upper bit)
+    //
     windows_1258_value: [
         0x41, // À
         0xC1, // Á
@@ -66,6 +94,10 @@ static TONE_DATA: ToneData = ToneData {
         0x75, // ù
         0xF5, // ú
     ],
+    // Index for decompositions of assorted code points outside the range
+    // 0x1ea0 - 0x1efa. This array lists the Unicode code points that can be
+    // decomposed (offset by negative 0xC3 so they fit in one byte). The actual
+    // decomposition is at the corresponding index of the `middle_value` array.
     middle_key: [
         0x00, // Ã
         0x09, // Ì
@@ -82,6 +114,25 @@ static TONE_DATA: ToneData = ToneData {
         0xA5, // Ũ
         0xA6, // ũ
     ],
+    // Decompositions. Given a composed code point, find it in the above array,
+    // then find the decomposition at the corresponding index in this array.
+    //
+    // The lower 7 bits of a value is the first replacement code point. The
+    // second code point is more complicated:
+    //   - If the first point is 0x59 ("Y") or 0x79 ("y"), it is 0x0301
+    //     ("Combining Acute Accent"). For these, ignore the upper bit.
+    //   - If the upper bit is 0, it is 0x0300 ("Combining Grave Accent").
+    //   - If the upper bit is 1, it is 0x0303 ("Combining Tilde")
+    //
+    // For example, the decomposition of 0xC3 ("Ã") 0xC1, which is the code
+    // points 0x41 ("A") + 0x0303 ("Combining tilde"):
+    //
+    //     0xC1  =  0b_1100_0001
+    //     First:   0b_0100_0001 = 0x41
+    //                  ^^^^^^^^   (Lower 7 bits)
+    //     Second:  0b_1         = 0x01 -> 0x0303
+    //                 ^           (Upper bit)
+    //
     middle_value: [
         0xC1, // Ã
         0x49, // Ì
@@ -98,6 +149,23 @@ static TONE_DATA: ToneData = ToneData {
         0xD5, // Ũ
         0xF5, // ũ
     ],
+    // Decompositions for code points in the range 0x1ea0 - 0x1efa (the main
+    // range of composed vowels + accents + tone marks used in Vietnamese).
+    //
+    // Decompositions are listed in order, so the decomposition for code point
+    // 0x1ea0 is at index 0, 0x1ea0 is at index 1, etc.
+    // 
+    // The lower 10 bits of a value is the first replacement code point. The
+    // upper 6 bits are the second code point, offset by negative 0x0300. For
+    // example, the decomposition of 0x1EA0 ("Ạ") is 0x8C41, which represents
+    // the code points 0x41 ("A") + 0x0323 ("Combining dot below"):
+    //
+    //     0x8C41 =  0b_1000_1100_0100_0001
+    //     First:    0b_0000_0000_0100_0001 = 0x41
+    //                          ^^^^^^^^^^^   (Lower 10 bits)
+    //     Second:   0b_1000_11             = 0x23 + 0x300 = 0x0323
+    //                  ^^^^^^^               (Upper 6 bits)
+    //
     extensions_for_vietnamese: [
         0x8C41, // Ạ
         0x8C61, // ạ
