@@ -3,7 +3,7 @@ name = "detone"
 description = "Decompose Vietnamese tone marks"
 version = "1.0.0"
 authors = ["Henri Sivonen <hsivonen@hsivonen.fi>"]
-edition = "2018"
+edition = "2021"
 license = "Apache-2.0 OR MIT"
 readme = "README.md"
 documentation = "https://docs.rs/detone/"
@@ -11,6 +11,7 @@ homepage = "https://docs.rs/detone/"
 repository = "https://github.com/hsivonen/detone"
 keywords = ["unicode", "vietnamese"]
 categories = ["text-processing", "internationalization"]
+rust-version = "1.60.0"
 
 [dev-dependencies]
 icu_normalizer = { version = "1.4.3", features = ["compiled_data"] }

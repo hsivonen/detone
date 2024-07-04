@@ -25,7 +25,17 @@ Please see the file named
 Generated [API documentation](https://docs.rs/detone/) is available
 online.
 
+## MSRV
+
+1.60 to use, 1.67 to run tests. Pin version 1.0.0 of this crate if you
+need an even lower MSRV; there are no non-test changes.
+
 ## Release Notes
+
+### 1.0.1
+
+* Updated metadata, internal documentation, and the dev dependency.
+* No non-test code changes.
 
 ### 1.0.0
 
