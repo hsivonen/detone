@@ -18,8 +18,6 @@
 //! like it was written with the (non-IME) Vietnamese keyboard layout (e.g. for
 //! machine learning training or benchmarking purposes).
 
-#![doc(html_root_url = "https://docs.rs/DecomposeVietnamese/1.0.0")]
-
 #[repr(align(64))] // Align to cache lines
 struct ToneData {
     windows_1258_key: [u8; 16],
