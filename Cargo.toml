@@ -13,5 +13,5 @@ keywords = ["unicode", "vietnamese"]
 categories = ["text-processing", "internationalization"]
 
 [dev-dependencies]
-unic-normal = "0.9.0"
+icu_normalizer = { version = "1.4.3", features = ["compiled_data"] }
 

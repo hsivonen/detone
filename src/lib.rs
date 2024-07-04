@@ -152,7 +152,7 @@ static TONE_DATA: ToneData = ToneData {
     //
     // Decompositions are listed in order, so the decomposition for code point
     // 0x1ea0 is at index 0, 0x1ea0 is at index 1, etc.
-    // 
+    //
     // The lower 10 bits of a value is the first replacement code point. The
     // upper 6 bits are the second code point, offset by negative 0x0300. For
     // example, the decomposition of 0x1EA0 ("Ạ") is 0x8C41, which represents
@@ -372,7 +372,6 @@ impl<I: Iterator<Item = char>> IterDecomposeVietnamese<I> for I {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use unic_normal::StrNormalForm;
 
     fn check(nfc: char, base: char, tone: char) {
         let mut decompose_vietnamese = std::iter::once(nfc).decompose_vietnamese_tones(true);
@@ -383,17 +382,18 @@ mod tests {
 
     #[test]
     fn test_tones() {
+        let normalizer = icu_normalizer::ComposingNormalizer::new_nfc();
         let bases = [
-            'A', 'a', 'Ă', 'ă', 'Â', 'â', 'E', 'e', 'Ê', 'ê', 'I', 'i', 'O', 'o', 'Ô', 'ô',
-            'Ơ', 'ơ', 'U', 'u', 'Ư', 'ư', 'Y', 'y',
+            'A', 'a', 'Ă', 'ă', 'Â', 'â', 'E', 'e', 'Ê', 'ê', 'I', 'i', 'O', 'o', 'Ô', 'ô', 'Ơ',
+            'ơ', 'U', 'u', 'Ư', 'ư', 'Y', 'y',
         ];
         let tones = ['\u{0300}', '\u{0309}', '\u{0303}', '\u{0301}', '\u{0323}'];
         for &base in bases.iter() {
             for &tone in tones.iter() {
-                let mut paired = String::new();
-                paired.push(base);
-                paired.push(tone);
-                let nfc = paired.nfc().next().unwrap();
+                let nfc = normalizer
+                    .normalize_iter([base, tone].iter().copied())
+                    .next()
+                    .unwrap();
                 check(nfc, base, tone);
             }
         }
