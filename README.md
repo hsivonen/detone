@@ -1,6 +1,6 @@
 # detone
 
-[![crates.io](https://meritbadge.herokuapp.com/detone)](https://crates.io/crates/detone)
+[![crates.io](https://img.shields.io/crates/v/detone.svg)](https://crates.io/crates/detone)
 [![docs.rs](https://docs.rs/detone/badge.svg)](https://docs.rs/detone/)
 [![Apache 2 / MIT dual-licensed](https://img.shields.io/badge/license-Apache%202%20%2F%20MIT-blue.svg)](https://github.com/hsivonen/detone/blob/master/COPYRIGHT)
 
