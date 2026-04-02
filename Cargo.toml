@@ -14,5 +14,5 @@ categories = ["text-processing", "internationalization"]
 rust-version = "1.60.0"
 
 [dev-dependencies]
-icu_normalizer = { version = "1.4.3", features = ["compiled_data"] }
+icu_normalizer = { version = "2.0.0", features = ["compiled_data"] }
 
